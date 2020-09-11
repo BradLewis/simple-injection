@@ -51,10 +51,22 @@ class ServiceCollection:
             service_to_add, service_implementation, ServiceLifetime.TRANSIENT, args
         )
 
+    def add_singleton(
+        self,
+        service_to_add: Type[T],
+        service_implementation: Optional[Type[T]] = None,
+        args: Optional[List[Any]] = None,
+    ):
+        self.add(
+            service_to_add, service_implementation, ServiceLifetime.SINGLETON, args
+        )
+
     def resolve(self, service_to_resolve: Type[T]):
         container_service = self._service_collection[service_to_resolve.__name__]
         if container_service.args:
             return container_service.service_implementation(*container_service.args)
+        if container_service.service_lifetime == ServiceLifetime.SINGLETON:
+            return self._resolve_singleton(container_service)
         return self._resolve_transient(container_service)
 
     def _resolve_transient(self, container_service: ContainerService):
@@ -63,3 +75,10 @@ class ServiceCollection:
         for annotation in annotations.values():
             services_to_use.append(self.resolve(annotation))
         return container_service.service_implementation(*services_to_use)
+
+    def _resolve_singleton(self, container_service: ContainerService):
+        if container_service.instance is None:
+            container_service.instance = self.resolve(
+                container_service.service_implementation
+            )
+        return container_service.instance
