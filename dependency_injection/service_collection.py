@@ -61,10 +61,15 @@ class ServiceCollection:
             service_to_add, service_implementation, ServiceLifetime.SINGLETON, args
         )
 
+    def add_instance(self, service_to_add: Type[T], instance: T):
+        self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
+
     def resolve(self, service_to_resolve: Type[T]):
         container_service = self._service_collection[service_to_resolve.__name__]
         if container_service.args:
             return container_service.service_implementation(*container_service.args)
+        if container_service.service_lifetime == ServiceLifetime.INSTANCE:
+            return self._resolve_instance(container_service)
         if container_service.service_lifetime == ServiceLifetime.SINGLETON:
             return self._resolve_singleton(container_service)
         return self._resolve_transient(container_service)
@@ -81,4 +86,7 @@ class ServiceCollection:
             container_service.instance = self.resolve(
                 container_service.service_implementation
             )
+        return container_service.instance
+
+    def _resolve_instance(self, container_service: ContainerService):
         return container_service.instance
