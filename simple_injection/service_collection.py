@@ -25,7 +25,7 @@ class ContainerService:
 
 class ServiceCollection:
     def __init__(self):
-        self._service_collection: Dict[str, ContainerService] = dict()
+        self._service_collection: Dict[Type[T], ContainerService] = dict()
 
     def add(
         self,
@@ -37,7 +37,7 @@ class ServiceCollection:
         if service_implementation is None:
             service_implementation = service_to_add
 
-        self._service_collection[service_to_add.__name__] = ContainerService(
+        self._service_collection[service_to_add] = ContainerService(
             service_implementation, service_lifetime, args
         )
 
@@ -65,17 +65,17 @@ class ServiceCollection:
         self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
 
     def resolve(self, service_to_resolve: Type[T]):
-        container_service = self._service_collection[service_to_resolve.__name__]
+        container_service = self._service_collection[service_to_resolve]
         if container_service.args:
             return container_service.service_implementation(*container_service.args)
         if container_service.service_lifetime == ServiceLifetime.INSTANCE:
             return self._resolve_instance(container_service)
         if container_service.service_lifetime == ServiceLifetime.SINGLETON:
             return self._resolve_singleton(container_service)
-        return self._resolve_transient(container_service)
+        return self._resolve_annotations(container_service)
 
-    def _resolve_transient(self, container_service: ContainerService):
-        annotations = container_service.__init__.__annotations__
+    def _resolve_annotations(self, container_service: ContainerService):
+        annotations = container_service.service_implementation.__init__.__annotations__
         services_to_use = list()
         for annotation in annotations.values():
             services_to_use.append(self.resolve(annotation))
@@ -83,9 +83,7 @@ class ServiceCollection:
 
     def _resolve_singleton(self, container_service: ContainerService):
         if container_service.instance is None:
-            container_service.instance = self.resolve(
-                container_service.service_implementation
-            )
+            container_service.instance = self._resolve_annotations(container_service)
         return container_service.instance
 
     def _resolve_instance(self, container_service: ContainerService):
