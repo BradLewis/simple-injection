@@ -5,7 +5,9 @@ from tests.classes import SomeTyping, NoTyping, A, B, C
 def test_with_args():
     collection = ServiceCollection()
     collection.add_singleton(NoTyping, args=["a", "b"])
-    collection.add_transient(SomeTyping, args=[ServiceResolverFlags.REQUIRED_SERVICE, "b"])
+    collection.add_transient(
+        SomeTyping, args=[ServiceResolverFlags.REQUIRED_SERVICE, "b"]
+    )
 
     some_typing = collection.resolve(SomeTyping)
     no_typing = collection.resolve(NoTyping)

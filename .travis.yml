@@ -5,6 +5,7 @@ cache: pip
 script:
 - pip install -r requirements-dev.txt
 - python -m pytest
+- black --check .
 deploy:
   provider: pypi
   username: __token__
