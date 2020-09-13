@@ -10,6 +10,10 @@ class ServiceLifetime(Enum):
     INSTANCE = auto()
 
 
+class ServiceResolverFlags(Enum):
+    REQUIRED_SERVICE = auto()
+
+
 class ContainerService:
     def __init__(
         self,
@@ -33,7 +37,7 @@ class ServiceCollection:
         service_implementation: Union[T, Type[T]],
         service_lifetime: ServiceLifetime,
         args: Optional[List[Any]] = None,
-    ):
+    ) -> None:
         if service_implementation is None:
             service_implementation = service_to_add
 
@@ -46,7 +50,7 @@ class ServiceCollection:
         service_to_add: Type[T],
         service_implementation: Optional[Type[T]] = None,
         args: Optional[List[Any]] = None,
-    ):
+    ) -> None:
         self.add(
             service_to_add, service_implementation, ServiceLifetime.TRANSIENT, args
         )
@@ -56,12 +60,12 @@ class ServiceCollection:
         service_to_add: Type[T],
         service_implementation: Optional[Type[T]] = None,
         args: Optional[List[Any]] = None,
-    ):
+    ) -> None:
         self.add(
             service_to_add, service_implementation, ServiceLifetime.SINGLETON, args
         )
 
-    def add_instance(self, service_to_add: Type[T], instance: T):
+    def add_instance(self, service_to_add: Type[T], instance: T) -> None:
         self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
 
     def run_function(self, function: Callable) -> Any:
@@ -71,10 +75,8 @@ class ServiceCollection:
                 args.append(self.resolve(annotation))
         return function(*args)
 
-    def resolve(self, service_to_resolve: Type[T]):
+    def resolve(self, service_to_resolve: Type[T]) -> T:
         container_service = self._service_collection[service_to_resolve]
-        if container_service.args:
-            return container_service.service_implementation(*container_service.args)
         if container_service.service_lifetime == ServiceLifetime.INSTANCE:
             return self._resolve_instance(container_service)
         if container_service.service_lifetime == ServiceLifetime.SINGLETON:
@@ -82,6 +84,8 @@ class ServiceCollection:
         return self._resolve_annotations(container_service)
 
     def _resolve_annotations(self, container_service: ContainerService):
+        if container_service.args:
+            return self._resolve_args(container_service)
         annotations = getattr(
             container_service.service_implementation.__init__, "__annotations__", dict()
         )
@@ -98,3 +102,14 @@ class ServiceCollection:
 
     def _resolve_instance(self, container_service: ContainerService):
         return container_service.instance
+
+    def _resolve_args(self, container_service: ContainerService):
+        args = list()
+        for i in range(len(container_service.args)):
+            arg = container_service.args[i]
+            if arg == ServiceResolverFlags.REQUIRED_SERVICE:
+                required_service = container_service.service_implementation
+                annotations = list(required_service.__init__.__annotations__.values())
+                arg = self.resolve(annotations[i])
+            args.append(arg)
+        return container_service.service_implementation(*args)
