@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -64,6 +64,13 @@ class ServiceCollection:
     def add_instance(self, service_to_add: Type[T], instance: T):
         self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
 
+    def run_function(self, function: Callable) -> Any:
+        args = list()
+        for name, annotation in function.__annotations__.items():
+            if name != "return":
+                args.append(self.resolve(annotation))
+        return function(*args)
+
     def resolve(self, service_to_resolve: Type[T]):
         container_service = self._service_collection[service_to_resolve]
         if container_service.args:
@@ -75,10 +82,13 @@ class ServiceCollection:
         return self._resolve_annotations(container_service)
 
     def _resolve_annotations(self, container_service: ContainerService):
-        annotations = container_service.service_implementation.__init__.__annotations__
+        annotations = getattr(
+            container_service.service_implementation.__init__, "__annotations__", dict()
+        )
         services_to_use = list()
-        for annotation in annotations.values():
-            services_to_use.append(self.resolve(annotation))
+        for name, annotation in annotations.items():
+            if name != "return":
+                services_to_use.append(self.resolve(annotation))
         return container_service.service_implementation(*services_to_use)
 
     def _resolve_singleton(self, container_service: ContainerService):
