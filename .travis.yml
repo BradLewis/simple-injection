@@ -1,0 +1,14 @@
+language: python
+python:
+- '3.8'
+cache: pip
+script:
+- pip install -r requirements-dev.txt
+- python -m pytest
+deploy:
+  provider: pypi
+  username: __token__
+  password:
+    secure: XUQUjhysZAEPr2iLaf+wlJa4Vy7/gRJnZSXq63j0fSXps3yPewAYr+cQpnu/+Q/gpr/9gFZ07bi99npAn/reR2W5p8LSkq04dd+56iUp4XrP7dZ7OQyJlTMnc75ppVigUfOMNYgxKgWKg06YK2CRtjo3o4ql3ewYVcjQLlr9dMI6AYQ2YB1Tl9zsgy0V+V5yfPSR5mUsJjP0rOFhNs0vZFxW7rmd2DuIj4+uXWW4TRgp9k5LlEkftKcPidDV3JkZwviG7ch8pnCQQ/vtPzE24DdFoQO2C0kHMARzjqpQcltkxuOlastdAea0h0jvnB+9+0ODUnJD97oZw54fmo0T9DWRidTldNXnhZo0wC/ZVV96QORUPpuWzgUSCDLZvAqYYhz7W67lwvRX0R08Uj4h3x0jFuNs8EGBF+JQh0UGqk0Hr3MaxiO3iIepwnvyhH5U58DG1AoC6yLm2y5c0l2FeCG4i55tDqiPnSJowzlD8U7VOyuO1UMbBxLtLztEOY2xPO9tBLjPDOXvvVWscjltf/sXLdtUyY76IVdgNZ6v6yXyxYSmlmBhxK5JQMfQDEW+h3ZFzfCOMzsdgZEPW87QvXzIYFNYxtCMy7mvkkjg2xoLcr/nz1CcUyjivr81q0SqryQVENq5/NVQjgmgyGpVkHkbjBx5l4QNfBAQFaOrSYk=
+  on:
+    branch: master
