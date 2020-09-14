@@ -24,7 +24,7 @@ class ContainerService:
         self.service_implementation = service_implementation
         self.service_lifetime = service_lifetime
         self.args = args
-        self.instance: T = None
+        self.singleton_instance: T = None
 
 
 class ServiceCollection:
@@ -96,12 +96,14 @@ class ServiceCollection:
         return container_service.service_implementation(*services_to_use)
 
     def _resolve_singleton(self, container_service: ContainerService):
-        if container_service.instance is None:
-            container_service.instance = self._resolve_annotations(container_service)
-        return container_service.instance
+        if container_service.singleton_instance is None:
+            container_service.singleton_instance = self._resolve_annotations(
+                container_service
+            )
+        return container_service.singleton_instance
 
     def _resolve_instance(self, container_service: ContainerService):
-        return container_service.instance
+        return container_service.service_implementation
 
     def _resolve_args(self, container_service: ContainerService):
         args = list()

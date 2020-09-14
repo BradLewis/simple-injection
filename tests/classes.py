@@ -23,3 +23,22 @@ class C:
     def __init__(self, a: A, b: B):
         self.a = a
         self.b = b
+
+
+class ParentClass:
+    def __init__(self, b: B):
+        self._b = b
+
+    def a_method(self):
+        pass
+
+
+class SubClass(ParentClass):
+    def __init__(self, c: C, b: B):
+        super().__init__(b)
+        self._c = c
+
+
+class UsesSubClass:
+    def __init__(self, pc: ParentClass):
+        self._pc = pc

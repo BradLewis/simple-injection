@@ -1,5 +1,5 @@
 from simple_injection import ServiceCollection, ServiceResolverFlags
-from tests.classes import SomeTyping, NoTyping, A, B, C
+from tests.classes import *
 
 
 def test_with_args():
@@ -28,3 +28,18 @@ def test_basic_singleton():
     assert b.a == c.a
     assert b.a == c.b.a
     assert a == b.a
+
+
+def test_subclass():
+    collection = ServiceCollection()
+    collection.add_transient(C)
+    collection.add_singleton(B)
+    collection.add_transient(A)
+    collection.add_singleton(ParentClass, SubClass)
+    collection.add_transient(UsesSubClass)
+
+    usc = collection.resolve(UsesSubClass)
+    pc = collection.resolve(ParentClass)
+
+    assert isinstance(usc._pc, SubClass)
+    assert usc._pc == pc

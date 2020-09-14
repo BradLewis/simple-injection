@@ -1,5 +1,5 @@
 from simple_injection import ServiceCollection, ServiceResolverFlags
-from tests.classes import A, B, C, NoTyping, SomeTyping
+from tests.classes import *
 
 
 def test_all_transient():
@@ -27,3 +27,18 @@ def test_with_args():
     some_typing = collection.resolve(SomeTyping)
     no_typing = collection.resolve(NoTyping)
     assert some_typing._no_typing != no_typing
+
+
+def test_subclass():
+    collection = ServiceCollection()
+    collection.add_transient(C)
+    collection.add_transient(B)
+    collection.add_transient(A)
+    collection.add_transient(ParentClass, SubClass)
+    collection.add_transient(UsesSubClass)
+
+    usc = collection.resolve(UsesSubClass)
+    pc = collection.resolve(ParentClass)
+
+    assert isinstance(usc._pc, SubClass)
+    assert usc._pc != pc
