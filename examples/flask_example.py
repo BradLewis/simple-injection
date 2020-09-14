@@ -42,12 +42,16 @@ def create_app(user_repo: IUserRepository) -> Flask:
     return app
 
 
-if __name__ == "__main__":
+def configure_services():
     collection = ServiceCollection()
     collection.add_transient(
         IDatabaseService, DatabaseService, args=["my connection string"]
     )
     collection.add_transient(IUserRepository, UserRepository)
+    return collection
 
-    app = collection.run_function(create_app)
+
+if __name__ == "__main__":
+    collection = configure_services()
+    app = collection.call_function(create_app)
     app.run()
