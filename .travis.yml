@@ -1,11 +1,11 @@
 language: python
 python:
-- '3.8'
+  - "3.8"
 cache: pip
 script:
-- pip install -r requirements-dev.txt
-- python -m pytest
-- black --check .
+  - pip install -r requirements-dev.txt
+  - python -m pytest
+  - black --check simple_injection
 deploy:
   provider: pypi
   username: __token__
