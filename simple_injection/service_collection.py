@@ -55,6 +55,8 @@ class _ContainerService:
         self.service_lifetime = service_lifetime
         self.args = args
         self.singleton_instance: T = None
+        self.multiple_implementations: bool = False
+        self.implementations: List[Union[Type[T], T]] = list()
 
 
 class ServiceCollection:
@@ -84,8 +86,32 @@ class ServiceCollection:
         if service_implementation is None:
             service_implementation = service_to_add
 
-        self._service_collection[service_to_add] = _ContainerService(
-            service_implementation, service_lifetime, args
+        if service_to_add in self._service_collection.keys():
+            if not List[service_to_add] in self._service_collection.keys():
+                self._create_list_service(service_to_add)
+            self.add(
+                service_implementation, service_implementation, service_lifetime, args
+            )
+            self._service_collection[List[service_to_add]].implementations.append(
+                service_implementation
+            )
+        else:
+            self._service_collection[service_to_add] = _ContainerService(
+                service_implementation, service_lifetime, args
+            )
+
+    def _create_list_service(self, service_to_add):
+        service = self._service_collection[service_to_add]
+        self.add(
+            service.service_implementation,
+            service.service_implementation,
+            service.service_lifetime,
+            service.args,
+        )
+        self.add(List[service_to_add], None, None, None)
+        self._service_collection[List[service_to_add]].multiple_implementations = True
+        self._service_collection[List[service_to_add]].implementations.append(
+            service.service_implementation
         )
 
     def add_transient(
@@ -168,11 +194,20 @@ class ServiceCollection:
             T: An instance of the resolved service.
         """
         container_service = self._service_collection[service_to_resolve]
+        if container_service.multiple_implementations:
+            return self._resolve_multiple(container_service)
         if container_service.service_lifetime == ServiceLifetime.INSTANCE:
             return self._resolve_instance(container_service)
         if container_service.service_lifetime == ServiceLifetime.SINGLETON:
             return self._resolve_singleton(container_service)
         return self._resolve_annotations(container_service)
+
+    def _resolve_multiple(self, container_service: _ContainerService):
+        services_to_resolve = container_service.implementations
+        services = list()
+        for service in services_to_resolve:
+            services.append(self.resolve(service))
+        return services
 
     def _resolve_annotations(self, container_service: _ContainerService):
         if container_service.args:
