@@ -30,3 +30,29 @@ def test_subclass():
 
     assert isinstance(usc._pc, SubClass)
     assert usc._pc == pc
+
+
+def test_multiple():
+    collection = ServiceCollection()
+    impl1 = Impl1()
+    impl2 = Impl2()
+    collection.add_instance(Base, impl1)
+    collection.add_instance(Base, impl2)
+    collection.add_transient(UsesMultiple)
+
+    um = collection.resolve(UsesMultiple)
+    assert len(um._multiple) == 2
+    assert um._multiple[0] == impl1
+    assert um._multiple[1] == impl2
+
+
+def test_service_override():
+    collection = ServiceCollection()
+    collection.add_instance(Base, Impl1())
+    impl2 = Impl2()
+    collection.add_instance(Base, impl2)
+    collection.add_transient(UsesBase)
+
+    ub = collection.resolve(UsesBase)
+    assert isinstance(ub._base, Impl2)
+    assert ub._base == impl2

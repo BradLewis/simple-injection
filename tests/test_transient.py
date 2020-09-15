@@ -54,3 +54,13 @@ def test_multiple():
     assert len(um._multiple) == 2
     assert isinstance(um._multiple[0], Impl1)
     assert isinstance(um._multiple[1], Impl2)
+
+
+def test_service_override():
+    collection = ServiceCollection()
+    collection.add_transient(Base, Impl1)
+    collection.add_transient(Base, Impl2)
+    collection.add_transient(UsesBase)
+
+    ub = collection.resolve(UsesBase)
+    assert isinstance(ub._base, Impl2)
