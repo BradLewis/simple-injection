@@ -1,3 +1,6 @@
+from typing import List
+
+
 class NoTyping:
     def __init__(self, a, b):
         self._a = a
@@ -42,3 +45,21 @@ class SubClass(ParentClass):
 class UsesSubClass:
     def __init__(self, pc: ParentClass):
         self._pc = pc
+
+
+class Base:
+    def test(self):
+        pass
+
+
+class Impl1(Base):
+    pass
+
+
+class Impl2(Base):
+    pass
+
+
+class UsesMultiple:
+    def __init__(self, multiple: List[Base]):
+        self._multiple = multiple

@@ -42,3 +42,15 @@ def test_subclass():
 
     assert isinstance(usc._pc, SubClass)
     assert usc._pc != pc
+
+
+def test_multiple():
+    collection = ServiceCollection()
+    collection.add_transient(Base, Impl1)
+    collection.add_transient(Base, Impl2)
+    collection.add_transient(UsesMultiple)
+
+    um = collection.resolve(UsesMultiple)
+    assert len(um._multiple) == 2
+    assert isinstance(um._multiple[0], Impl1)
+    assert isinstance(um._multiple[1], Impl2)
