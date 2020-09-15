@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="simple-injection",
-    version="0.2.1",
+    version="0.2.2",
     description="A simple library for typing-based dependency injection",
     author="Bradley Lewis",
     license="MIT",

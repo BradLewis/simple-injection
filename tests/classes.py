@@ -63,3 +63,8 @@ class Impl2(Base):
 class UsesMultiple:
     def __init__(self, multiple: List[Base]):
         self._multiple = multiple
+
+
+class UsesBase:
+    def __init__(self, base: Base):
+        self._base = base
