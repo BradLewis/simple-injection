@@ -4,7 +4,8 @@ python:
 cache: pip
 script:
   - pip install -r requirements-dev.txt
-  - python -m pytest
+  - pip install pytest-cov codecov
+  - pytest --cov=./simple_injection
   - black --check simple_injection
 after_success:
   - codecov
