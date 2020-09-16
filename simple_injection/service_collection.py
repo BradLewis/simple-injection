@@ -72,6 +72,11 @@ class ServiceCollection:
     ) -> None:
         """Add a service to the service collection.
 
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
+
         Args:
             service_to_add (Type[T]): Service to add to the collection.
             service_implementation (Union[T, Type[T]]): Implementation of the service.
@@ -99,20 +104,6 @@ class ServiceCollection:
             service_implementation, service_lifetime, args
         )
 
-    def _create_list_service(self, service_to_add):
-        service = self._service_collection[service_to_add]
-        self.add(
-            service.service_implementation,
-            service.service_implementation,
-            service.service_lifetime,
-            service.args,
-        )
-        self.add(List[service_to_add], None, None, None)
-        self._service_collection[List[service_to_add]].multiple_implementations = True
-        self._service_collection[List[service_to_add]].implementations.append(
-            service.service_implementation
-        )
-
     def add_transient(
         self,
         service_to_add: Type[T],
@@ -122,6 +113,12 @@ class ServiceCollection:
         """Add a transient service to the service collection. A transient service
             will have a new instance created everytime the service is requested
             from the collection.
+
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
+
 
         Args:
             service_to_add (Type[T]): Service to add to the collection.
@@ -145,6 +142,12 @@ class ServiceCollection:
             will share the same instance for request from the collection, and will
             be created the first time it is requested.
 
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
+
+
         Args:
             service_to_add (Type[T]): Service to add to the collection.
             service_implementation (Type[T], optional): Implementation of the service.
@@ -160,6 +163,11 @@ class ServiceCollection:
     def add_instance(self, service_to_add: Type[T], instance: T) -> None:
         """Add an instance service to the service collection. The provided instance will
             be used each time the service is requested.
+
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
 
         Args:
             service_to_add (Type[T]): Service to add to the collection.
@@ -240,3 +248,17 @@ class ServiceCollection:
                 arg = self.resolve(annotations[i])
             args.append(arg)
         return container_service.service_implementation(*args)
+
+    def _create_list_service(self, service_to_add):
+        service = self._service_collection[service_to_add]
+        self.add(
+            service.service_implementation,
+            service.service_implementation,
+            service.service_lifetime,
+            service.args,
+        )
+        self.add(List[service_to_add], None, None, None)
+        self._service_collection[List[service_to_add]].multiple_implementations = True
+        self._service_collection[List[service_to_add]].implementations.append(
+            service.service_implementation
+        )
