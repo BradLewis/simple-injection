@@ -23,7 +23,7 @@ pip install simple-injection
 
 ## Usage
 
-Due to Simple Injection relying only on typings, it is easy to add to your application. 
+Due to Simple Injection relying only on typings, it is easy to add to your application.
 
 ```python
 from simple_injection import ServiceCollection
