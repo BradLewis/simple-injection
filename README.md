@@ -79,7 +79,7 @@ class Service:
     def __init__(self, dependency: Dependency, my_int: int):
         self.my_int
         self._dependency = dependency
-    
+
     def get_str(self):
         return self._dependency.my_str
 
