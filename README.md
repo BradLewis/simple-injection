@@ -1,6 +1,6 @@
 # Simple Injection
 
-![Build Status](https://travis-ci.com/BradLewis/simple-injection.svg?branch=master) [![codecov](https://codecov.io/gh/BradLewis/simple-injection/branch/master/graph/badge.svg)](https://codecov.io/gh/BradLewis/simple-injection)
+![Build Status](https://travis-ci.com/BradLewis/simple-injection.svg?branch=master) [![codecov](https://codecov.io/gh/BradLewis/simple-injection/branch/master/graph/badge.svg)](https://codecov.io/gh/BradLewis/simple-injection) [![Documentation Status](https://readthedocs.org/projects/simple-injection/badge/?version=latest)](https://simple-injection.readthedocs.io/en/latest/?badge=latest)
 
 ## Introduction
 
@@ -93,6 +93,10 @@ service.get_str() # Example string!
 ```
 
 See [examples](./examples) for more examples.
+
+## Documentation
+
+Documentation for Simple Injection can be found on [readthedocs](https://simple-injection.readthedocs.io/en/latest/).
 
 ## Contributing
 
