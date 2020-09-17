@@ -175,7 +175,7 @@ class ServiceCollection:
         """
         self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
 
-    def call_function(self, function: Callable) -> Any:
+    def call_function(self, function: Callable[[], T]) -> T:
         """Call a function resolving inputs using the service collection.
 
         Args:
