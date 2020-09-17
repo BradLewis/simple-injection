@@ -1,6 +1,7 @@
 # Simple Injection
 
-[![Build Status](https://travis-ci.com/BradLewis/simple-injection.svg?branch=master)](https://travis-ci.com/BradLewis/simple-injection) [![codecov](https://codecov.io/gh/BradLewis/simple-injection/branch/master/graph/badge.svg)](https://codecov.io/gh/BradLewis/simple-injection) [![Documentation Status](https://readthedocs.org/projects/simple-injection/badge/?version=latest)](https://simple-injection.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.com/BradLewis/simple-injection.svg?branch=master)](https://travis-ci.com/BradLewis/simple-injection) [![codecov](https://codecov.io/gh/BradLewis/simple-injection/branch/master/graph/badge.svg)](https://codecov.io/gh/BradLewis/simple-injection) [![Documentation Status](https://readthedocs.org/projects/simple-injection/badge/?version=latest)](https://simple-injection.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/simple-injection.svg)](https://pypi.python.org/pypi/simple-injection/) [![PyPI license](https://img.shields.io/pypi/l/simple-injection.svg)](https://pypi.python.org/pypi/simple-injection/)
+
 
 ## Introduction
 
@@ -9,9 +10,11 @@ The goal of Simple Injection is to allow simple and effective dependency injecti
 
 ## Features
 
-* Only dependent on native python code and typings.
+* Only dependent on native python code and typings. Services are injected through typing annotations, rather than variable names or decorators in your code.
 * Easily define service lifetimes.
 * Enforces typings in your application.
+* Bind abstract services to their implementations.
+* Add services in any order, resolution occurs when a service is request.
 
 ## Installation
 
