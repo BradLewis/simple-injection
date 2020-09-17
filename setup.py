@@ -8,7 +8,7 @@ def get_long_description():
 
 setuptools.setup(
     name="simple-injection",
-    version="0.2.2",
+    version="0.2.3",
     description="A simple library for typing-based dependency injection",
     long_description_content_type="text/markdown",
     long_description=get_long_description(),
