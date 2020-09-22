@@ -15,8 +15,8 @@ Welcome to Simple-Injection's documentation!
 Indices and tables
 ==================
 
-* :ref:`genindex`
 * :ref:`search`
 
 .. toctree::
+   flask_example
    simple_injection
