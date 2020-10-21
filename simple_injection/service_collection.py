@@ -59,6 +59,12 @@ class _ContainerService:
         self.implementations: List[Union[Type[T], T]] = list()
 
 
+class ServiceResolutionError(Exception):
+    def __init__(self, message, errors, service):
+        super().__init__(message, errors)
+        self.service = service
+
+
 class ServiceCollection:
     def __init__(self):
         self._service_collection: Dict[Type[T], _ContainerService] = dict()
@@ -200,6 +206,11 @@ class ServiceCollection:
         Returns:
             T: An instance of the resolved service.
         """
+        if service_to_resolve not in self._service_collection:
+            raise ValueError(
+                f"Service {service_to_resolve} not found in the collection. Ensure {service_to_resolve} has been added to the collection."
+            )
+        try:
         container_service = self._service_collection[service_to_resolve]
         if container_service.multiple_implementations:
             return self._resolve_multiple(container_service)
@@ -208,6 +219,14 @@ class ServiceCollection:
         if container_service.service_lifetime == ServiceLifetime.SINGLETON:
             return self._resolve_singleton(container_service)
         return self._resolve_annotations(container_service)
+        except ServiceResolutionError:
+            pass
+        except Exception as e:
+            raise ServiceResolutionError(
+                f"Exception occurred trying to resolve {service_to_resolve}",
+                e,
+                service_to_resolve,
+            )
 
     def _resolve_multiple(self, container_service: _ContainerService):
         services_to_resolve = container_service.implementations
