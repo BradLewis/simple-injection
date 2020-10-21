@@ -206,19 +206,21 @@ class ServiceCollection:
         Returns:
             T: An instance of the resolved service.
         """
+        if self._is_optional(service_to_resolve):
+            return self._handle_optional(service_to_resolve)
         if service_to_resolve not in self._service_collection:
             raise ValueError(
                 f"Service {service_to_resolve} not found in the collection. Ensure {service_to_resolve} has been added to the collection."
             )
         try:
-        container_service = self._service_collection[service_to_resolve]
-        if container_service.multiple_implementations:
-            return self._resolve_multiple(container_service)
-        if container_service.service_lifetime == ServiceLifetime.INSTANCE:
-            return self._resolve_instance(container_service)
-        if container_service.service_lifetime == ServiceLifetime.SINGLETON:
-            return self._resolve_singleton(container_service)
-        return self._resolve_annotations(container_service)
+            container_service = self._service_collection[service_to_resolve]
+            if container_service.multiple_implementations:
+                return self._resolve_multiple(container_service)
+            if container_service.service_lifetime == ServiceLifetime.INSTANCE:
+                return self._resolve_instance(container_service)
+            if container_service.service_lifetime == ServiceLifetime.SINGLETON:
+                return self._resolve_singleton(container_service)
+            return self._resolve_annotations(container_service)
         except ServiceResolutionError:
             pass
         except Exception as e:
@@ -268,6 +270,13 @@ class ServiceCollection:
             args.append(arg)
         return container_service.service_implementation(*args)
 
+    def _handle_optional(self, service_to_resolve: Type[T]):
+        to_resolve = service_to_resolve.__args__[0]
+        if to_resolve in self._service_collection:
+            return self.resolve(to_resolve)
+        else:
+            return None
+
     def _create_list_service(self, service_to_add):
         service = self._service_collection[service_to_add]
         self.add(
@@ -281,3 +290,11 @@ class ServiceCollection:
         self._service_collection[List[service_to_add]].implementations.append(
             service.service_implementation
         )
+
+    def _is_optional(self, service_to_resolve: Type[T]):
+        if not hasattr(service_to_resolve, "__args__"):
+            return False
+        args = service_to_resolve.__args__
+        if len(args) != 2:
+            return False
+        return args[-1] == type(None)

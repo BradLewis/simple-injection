@@ -27,7 +27,7 @@ class UserRepository(IUserRepository):
 
     def get_by_id(self, id: int):
         query = "SELECT * FROM users WHERE id = ?"
-        result = self._db_serive.run_query(query, id)
+        result = self._db_service.run_query(query, id)
         return {"name": "test name", "id": id}
 
 
