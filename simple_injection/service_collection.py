@@ -221,8 +221,8 @@ class ServiceCollection:
             if container_service.service_lifetime == ServiceLifetime.SINGLETON:
                 return self._resolve_singleton(container_service)
             return self._resolve_annotations(container_service)
-        except ServiceResolutionError:
-            pass
+        except ServiceResolutionError as e:
+            raise e
         except Exception as e:
             raise ServiceResolutionError(
                 f"Exception occurred trying to resolve {service_to_resolve}",
