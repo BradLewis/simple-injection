@@ -106,9 +106,10 @@ class ServiceCollection:
             self._service_collection[List[service_to_add]].implementations.append(
                 service_implementation
             )
-        self._service_collection[service_to_add] = _ContainerService(
-            service_implementation, service_lifetime, args
-        )
+        else:
+            self._service_collection[service_to_add] = _ContainerService(
+                service_implementation, service_lifetime, args
+            )
 
     def add_transient(
         self,

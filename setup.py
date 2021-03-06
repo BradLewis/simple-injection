@@ -1,4 +1,4 @@
-from setuptools import setup
+import setuptools
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from glob import glob
 
@@ -6,7 +6,7 @@ __version__ = "0.3.0"
 
 ext_modules = [
     Pybind11Extension(
-        "simple_injection",
+        "_simple_injection",
         sorted(glob("src/*.cpp")),  # Sort source files for reproducibility
     ),
 ]
@@ -17,8 +17,8 @@ def get_long_description():
         return f.read()
 
 
-setup(
-    name="simple-injection",
+setuptools.setup(
+    name="simple-injection-cpp",
     version=__version__,
     description="A simple library for typing-based dependency injection",
     long_description_content_type="text/markdown",
@@ -34,4 +34,5 @@ setup(
     python_requires=">=3.5",
     cmdclass={"build_ext": build_ext},
     ext_modules=ext_modules,
+    packages=setuptools.find_packages(),
 )

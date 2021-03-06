@@ -1,3 +1,6 @@
+#ifndef __CONTAINERSERVICE_H__
+#define __CONTAINERSERVICE_H__
+
 #include <pybind11/pybind11.h>
 #include "ServiceLifetime.h"
 
@@ -14,6 +17,8 @@ public:
     bool HasMultipleImplementations;
     std::vector<py::object> Implementations;
 
+    ContainerService() {}
+
     ContainerService(py::object implementation, ServiceLifetime lifetime)
     {
         Implementation = implementation;
@@ -21,8 +26,10 @@ public:
         HasMultipleImplementations = false;
     }
 
-    ContainerService(py::object implementation, ServiceLifetime lifetime, std::vector<py::object> args) : ContainerService(implementation, lifetime)
-    {
-        Args = args;
-    }
+    // ContainerService(py::object implementation, ServiceLifetime lifetime, std::vector<py::object> args) : ContainerService(implementation, lifetime)
+    // {
+    //     Args = args;
+    // }
 };
+
+#endif // __CONTAINERSERVICE_H__

@@ -3,3 +3,6 @@
 *.pyc
 docs/build
 extern/*
+build/
+dist/
+simple_injection_cpp*
