@@ -3,7 +3,7 @@
 #include "ContainerService.h"
 #include "ServiceLifetime.h"
 
-py::object _ServiceCollection::Resolve(long serviceId)
+py::object _ServiceCollePction::Resolve(long serviceId)
 {
     std::cout << "here" << std::endl;
     py::object service = _serviceCollection[serviceId].Implementation;

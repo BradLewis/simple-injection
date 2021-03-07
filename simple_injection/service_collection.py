@@ -1,4 +1,4 @@
-from _simple_injection import _ServiceCollection, ServiceLifetime
+from _simple_injection import _ServiceCollection, ServiceLifetime, ServiceResolverFlags
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 T = TypeVar("T")
@@ -64,6 +64,49 @@ class ServiceCollection:
                 Defaults to None.
         """
         self.add(service_to_add, service_implementation, ServiceLifetime.TRANSIENT)
+
+    def add_singleton(
+        self,
+        service_to_add: Type[T],
+        service_implementation: Optional[Type[T]] = None,
+        args: Optional[List[Any]] = None,
+    ) -> None:
+        """Add a singleton service to the service collection. A singleton service
+            will share the same instance for request from the collection, and will
+            be created the first time it is requested.
+
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
+
+
+        Args:
+            service_to_add (Type[T]): Service to add to the collection.
+            service_implementation (Type[T], optional): Implementation of the service.
+                If None, it will use service_to_add. Deafaults None.
+            args (List[Any], optional): Args to be passed to the class when
+                instanciating. If None, the args will be deduced by the service collection.
+                Defaults to None.
+        """
+        self.add(
+            service_to_add, service_implementation, ServiceLifetime.SINGLETON, args
+        )
+
+    def add_instance(self, service_to_add: Type[T], instance: T) -> None:
+        """Add an instance service to the service collection. The provided instance will
+            be used each time the service is requested.
+
+        If adding a service that has already been added. The new service will
+            override the old service. It will also keep track of the old and new
+            service/s so they can all injected when requesting a List[ServiceType]
+            from the ServiceCollection.
+
+        Args:
+            service_to_add (Type[T]): Service to add to the collection.
+            instance (T): Instance for the service.
+        """
+        self.add(service_to_add, instance, ServiceLifetime.INSTANCE)
 
     def resolve(self, service_to_resolve: Type[T]) -> T:
         """Resolve a service declared in the container. The service must be

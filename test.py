@@ -1,4 +1,4 @@
-from simple_injection import ServiceCollection
+from simple_injection import ServiceCollection, ServiceResolverFlags, ServiceLifetime
 
 
 class A:
