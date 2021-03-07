@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "ServiceCollection.h"
 #include "ServiceLifetime.h"
 #include "ServiceResolverFlags.h"
@@ -10,8 +11,8 @@ PYBIND11_MODULE(_simple_injection, m)
     m.doc() = "Dependency injection library for python";
     py::class_<_ServiceCollection>(m, "_ServiceCollection")
         .def(py::init())
-        .def("add", static_cast<void (_ServiceCollection::*)(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons)>(&_ServiceCollection::Add))
-        .def("add", static_cast<void (_ServiceCollection::*)(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons, py::list args)>(&_ServiceCollection::Add))
+        .def("add", static_cast<void (_ServiceCollection::*)(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations)>(&_ServiceCollection::Add))
+        .def("add", static_cast<void (_ServiceCollection::*)(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations, py::list args)>(&_ServiceCollection::Add))
         .def("resolve", &_ServiceCollection::Resolve);
 
     py::enum_<ServiceLifetime>(m, "ServiceLifetime", R"pbdoc(

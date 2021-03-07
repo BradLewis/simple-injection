@@ -16,17 +16,19 @@ public:
     py::object SingletonInstance;
     bool HasMultipleImplementations;
     std::vector<py::object> Implementations;
+    std::map<std::string, py::object> Annotations;
 
     ContainerService() {}
 
-    ContainerService(py::object implementation, ServiceLifetime lifetime)
+    ContainerService(py::object implementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations)
     {
         Implementation = implementation;
         Lifetime = lifetime;
         HasMultipleImplementations = false;
+        Annotations = annotations;
     }
 
-    ContainerService(py::object implementation, ServiceLifetime lifetime, py::list args) : ContainerService(implementation, lifetime)
+    ContainerService(py::object implementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations, py::list args) : ContainerService(implementation, lifetime, annotations)
     {
         Args = args;
     }

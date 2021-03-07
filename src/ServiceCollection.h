@@ -2,6 +2,7 @@
 #define __SERVICECOLLECTION_H__
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <map>
 #include <iostream>
 #include "ServiceLifetime.h"
@@ -18,10 +19,10 @@ private:
     py::object ResolveArgs(ContainerService containerService);
 
 public:
-    _ServiceCollection() { std::cout << "hello from c++" << std::endl; }
+    _ServiceCollection() {}
     py::object Resolve(py::object service);
-    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons);
-    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons, py::list args);
+    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations);
+    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations, py::list args);
 };
 
 #endif // __SERVICECOLLECTION_H__

@@ -1,4 +1,5 @@
-from simple_injection import ServiceCollection, ServiceResolverFlags, ServiceLifetime
+from simple_injection import ServiceCollection, ServiceResolverFlags
+from time import time
 
 
 class A:
@@ -19,9 +20,12 @@ class B:
         self.a.test()
 
 
-a = ServiceCollection()
-a.add_transient(A, args=[10])
-a.add_transient(B)
+s = time()
+for _ in range(1000):
+    a = ServiceCollection()
+    a.add_transient(A, args=[10])
+    a.add_transient(B)
 
-x = a.resolve(B)
-x.test()
+    x = a.resolve(B)
+    x.test()
+print(time() - s)
