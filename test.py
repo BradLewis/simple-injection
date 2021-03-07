@@ -7,7 +7,7 @@ class A:
 
 
 a = ServiceCollection()
-a.add_transient(id(A), A)
+a.add_transient(A, A)
 
-x = a.resolve(id(A))
+x = a.resolve(A)
 x.test()

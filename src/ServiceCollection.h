@@ -16,7 +16,8 @@ private:
     std::map<long, ContainerService> _serviceCollection;
 
 public:
-    _ServiceCollection(){std::cout << "hello from c++";} py::object Resolve(long serviceId);
+    _ServiceCollection() { std::cout << "hello from c++" << std::endl; }
+    py::object Resolve(long serviceId);
     void Add(long serviceId, py::object serviceImplementation, ServiceLifetime lifetime);
 };
 

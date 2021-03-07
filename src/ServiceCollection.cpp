@@ -16,5 +16,5 @@ py::object _ServiceCollection::Resolve(long serviceId)
 void _ServiceCollection::Add(long serviceId, py::object serviceImplementation, ServiceLifetime lifetime)
 {
     _serviceCollection[serviceId] = ContainerService(serviceImplementation, lifetime);
-    std::cout << serviceId;
+    std::cout << serviceId << std::endl;
 }
