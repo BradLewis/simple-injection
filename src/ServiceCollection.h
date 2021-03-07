@@ -13,12 +13,15 @@ using namespace std;
 class _ServiceCollection
 {
 private:
-    std::map<long, ContainerService> _serviceCollection;
+    std::map<ssize_t, ContainerService> _serviceCollection;
+    py::object ResolveAnnotations(ContainerService containerService);
+    py::object ResolveArgs(ContainerService containerService);
 
 public:
     _ServiceCollection() { std::cout << "hello from c++" << std::endl; }
-    py::object Resolve(long serviceId);
-    void Add(long serviceId, py::object serviceImplementation, ServiceLifetime lifetime);
+    py::object Resolve(py::object service);
+    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons);
+    void Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, py::dict annotaitons, py::list args);
 };
 
 #endif // __SERVICECOLLECTION_H__

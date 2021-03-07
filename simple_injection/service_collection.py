@@ -35,9 +35,24 @@ class ServiceCollection:
         """
         if service_implementation is None:
             service_implementation = service_to_add
-        self._collection.add(
-            id(service_to_add), service_implementation, service_lifetime
+        annotations = getattr(
+            service_implementation.__init__, "__annotations__", dict()
         )
+        if args is None:
+            self._collection.add(
+                service_to_add,
+                service_implementation,
+                service_lifetime,
+                annotations,
+            )
+        else:
+            self._collection.add(
+                service_to_add,
+                service_implementation,
+                service_lifetime,
+                annotations,
+                args,
+            )
 
     def add_transient(
         self,
@@ -63,7 +78,9 @@ class ServiceCollection:
                 instanciating. If None, the args will be deduced by the service collection.
                 Defaults to None.
         """
-        self.add(service_to_add, service_implementation, ServiceLifetime.TRANSIENT)
+        self.add(
+            service_to_add, service_implementation, ServiceLifetime.TRANSIENT, args
+        )
 
     def add_singleton(
         self,
@@ -118,4 +135,4 @@ class ServiceCollection:
         Returns:
             T: An instance of the resolved service.
         """
-        return self._collection.resolve(id(service_to_resolve))
+        return self._collection.resolve(service_to_resolve)

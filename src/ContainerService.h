@@ -12,7 +12,7 @@ class ContainerService
 public:
     py::object Implementation;
     ServiceLifetime Lifetime;
-    std::vector<py::object> Args;
+    py::list Args;
     py::object SingletonInstance;
     bool HasMultipleImplementations;
     std::vector<py::object> Implementations;
@@ -26,10 +26,10 @@ public:
         HasMultipleImplementations = false;
     }
 
-    // ContainerService(py::object implementation, ServiceLifetime lifetime, std::vector<py::object> args) : ContainerService(implementation, lifetime)
-    // {
-    //     Args = args;
-    // }
+    ContainerService(py::object implementation, ServiceLifetime lifetime, py::list args) : ContainerService(implementation, lifetime)
+    {
+        Args = args;
+    }
 };
 
 #endif // __CONTAINERSERVICE_H__
