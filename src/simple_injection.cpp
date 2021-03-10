@@ -3,6 +3,7 @@
 #include "ServiceCollection.h"
 #include "ServiceLifetime.h"
 #include "ServiceResolverFlags.h"
+#include "Exceptions.h"
 
 namespace py = pybind11;
 
@@ -50,4 +51,17 @@ PYBIND11_MODULE(_simple_injection, m)
             collection.add_transient(Example, args=[1, ServiceResolverFlag.REQUIRED_SERVICE])
         )pbdoc")
         .value("REQUIRED_SERVICE", ServiceResolverFlags::REQUIRED_SERVICE);
+
+    static py::exception<ServiceResolutionError> ex(m, "ServiceResolutionError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try
+        {
+            if (p)
+                std::rethrow_exception(p);
+        }
+        catch (const ServiceResolutionError &e)
+        {
+            ex(e.what());
+        }
+    });
 }

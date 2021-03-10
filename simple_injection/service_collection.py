@@ -1,10 +1,17 @@
-from _simple_injection import _ServiceCollection, ServiceLifetime, ServiceResolverFlags
+from _simple_injection import (
+    _ServiceCollection,
+    ServiceLifetime,
+    ServiceResolverFlags,
+    ServiceResolutionError,
+)
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 T = TypeVar("T")
 
 
 class ServiceCollection:
+    """The ServiceCollection class is for managing and resolving services."""
+
     def __init__(self):
         self._collection = _ServiceCollection()
 
