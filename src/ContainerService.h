@@ -13,7 +13,7 @@ public:
     py::object Implementation;
     ServiceLifetime Lifetime;
     py::list Args;
-    py::object SingletonInstance;
+    py::object SingletonInstance = py::none();
     bool HasMultipleImplementations;
     std::vector<py::object> Implementations;
     std::map<std::string, py::object> Annotations;

@@ -2,16 +2,24 @@
 #include "ServiceCollection.h"
 #include "ContainerService.h"
 #include "ServiceLifetime.h"
+#include "Exceptions.h"
 
 using namespace pybind11::literals;
 
 py::object _ServiceCollection::Resolve(py::object service)
 {
-
     ssize_t serviceId = py::hash(service);
-    auto service_to_resolve = _serviceCollection[serviceId];
-
-    return ResolveAnnotations(service_to_resolve);
+    auto it = _serviceCollection.find(serviceId);
+    if (it == _serviceCollection.end())
+    {
+        throw ServiceResolutionError("Requested service not found in collection.", service);
+    }
+    ContainerService &serviceToResolve = _serviceCollection[serviceId];
+    if (serviceToResolve.Lifetime == ServiceLifetime::INSTANCE)
+        return ResolveInstance(serviceToResolve);
+    if (serviceToResolve.Lifetime == ServiceLifetime::SINGLETON)
+        return ResolveSingleton(serviceToResolve);
+    return ResolveTransient(serviceToResolve);
 }
 
 void _ServiceCollection::Add(py::object service, py::object serviceImplementation, ServiceLifetime lifetime, std::map<std::string, py::object> annotations)
@@ -26,7 +34,7 @@ void _ServiceCollection::Add(py::object service, py::object serviceImplementatio
     _serviceCollection[serviceId] = ContainerService(serviceImplementation, lifetime, annotations, args);
 }
 
-py::object _ServiceCollection::ResolveAnnotations(ContainerService containerService)
+py::object _ServiceCollection::ResolveAnnotations(ContainerService &containerService)
 {
     if (!containerService.Args.empty())
     {
@@ -46,7 +54,26 @@ py::object _ServiceCollection::ResolveAnnotations(ContainerService containerServ
     return implementation(*py::cast(services_to_use));
 }
 
-py::object _ServiceCollection::ResolveArgs(ContainerService containerService)
+py::object _ServiceCollection::ResolveArgs(ContainerService &containerService)
 {
     return containerService.Implementation(*containerService.Args);
+}
+
+py::object _ServiceCollection::ResolveSingleton(ContainerService &containerService)
+{
+    if (containerService.SingletonInstance.is_none())
+    {
+        containerService.SingletonInstance = ResolveAnnotations(containerService);
+    }
+    return containerService.SingletonInstance;
+}
+
+py::object _ServiceCollection::ResolveTransient(ContainerService &containerService)
+{
+    return ResolveAnnotations(containerService);
+}
+
+py::object _ServiceCollection::ResolveInstance(ContainerService &containerService)
+{
+    return containerService.Implementation;
 }

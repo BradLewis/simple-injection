@@ -15,8 +15,11 @@ class _ServiceCollection
 {
 private:
     std::map<ssize_t, ContainerService> _serviceCollection;
-    py::object ResolveAnnotations(ContainerService containerService);
-    py::object ResolveArgs(ContainerService containerService);
+    py::object ResolveAnnotations(ContainerService& containerService);
+    py::object ResolveArgs(ContainerService& containerService);
+    py::object ResolveSingleton(ContainerService& containerService);
+    py::object ResolveTransient(ContainerService& containerService);
+    py::object ResolveInstance(ContainerService& containerService);
 
 public:
     _ServiceCollection() {}
