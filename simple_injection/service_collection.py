@@ -66,7 +66,16 @@ class ServiceResolutionError(Exception):
 
 
 class ServiceCollection:
-    def __init__(self):
+    """Class for managing a collection of services.
+
+    Args:
+        auto_resolve (bool, optional): If true, will automatically add and resolve any
+            services that was not added to the collection as a transient service.
+            Defaults False.
+    """
+
+    def __init__(self, auto_resolve: Optional[bool] = False):
+        self._auto_resolve = auto_resolve
         self._service_collection: Dict[Type[T], _ContainerService] = dict()
 
     def add(
@@ -209,9 +218,11 @@ class ServiceCollection:
         if self._is_optional(service_to_resolve):
             return self._handle_optional(service_to_resolve)
         if service_to_resolve not in self._service_collection:
-            raise ValueError(
-                f"Service {service_to_resolve} not found in the collection. Ensure {service_to_resolve} has been added to the collection."
-            )
+            if not self._auto_resolve:
+                raise ValueError(
+                    f"Service {service_to_resolve} not found in the collection. Ensure {service_to_resolve} has been added to the collection."
+                )
+            self.add_transient(service_to_resolve)
         try:
             container_service = self._service_collection[service_to_resolve]
             if container_service.multiple_implementations:
